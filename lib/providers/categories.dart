@@ -6,7 +6,7 @@ import '../models/category_item.dart';
 class Categories with ChangeNotifier {
   final databaseReference = Firestore.instance;
 
-  final String userId;
+  String userId;
 
   List<Category> categories = [
     /*Category(id: 'id1', title: 'Books', items: [
@@ -82,7 +82,7 @@ class Categories with ChangeNotifier {
     ])*/
   ];
 
-  Categories({this.userId, this.categories});
+  Categories({this.userId});
 
   List<Category> get getCategories {
     return [...categories];
@@ -90,8 +90,9 @@ class Categories with ChangeNotifier {
 
   Future<void> fetchAndSetCategories() async {}
 
-  void getData(AsyncSnapshot<QuerySnapshot> snapshot) {
-    categories= snapshot.data.documents.map((doc) {
+  void getData(AsyncSnapshot<QuerySnapshot> snapshot, String userId) {
+    this.userId = userId;
+    categories = snapshot.data.documents.map((doc) {
       return Category(
         id: doc.documentID,
         items: [
@@ -118,17 +119,33 @@ class Categories with ChangeNotifier {
         .firstWhere((item) => item.id == id);
   }
 
-  void addCategory(String title, String userId) async {
+  Future<void> addCategory(String title, String userId) async {
     // categories.add(Category(
     //     id: DateTime.now().toIso8601String(), title: title, items: []));
 
     // .add({);
+    await databaseReference
+        .collection('/categories/$userId/cats')
+        .add({'title': title, 'items': []});
 
     notifyListeners();
   }
 
-  void addItemToCategory(String catId, CategoryItem item) {
-    findCategoryById(catId).items.add(item);
+  void addItemToCategory(String catId, CategoryItem item, String userId) {
+    Category cat = findCategoryById(catId);
+    cat.items.add(item);
+    print(cat.items.length);
+    databaseReference
+        .collection('categories/$userId/cats')
+        .document('$catId')
+        .updateData({
+      'items': [
+        ...cat.items.map((item) {
+          return item.toJson();
+        })
+      ]
+    });
+
     notifyListeners();
   }
 
@@ -145,9 +162,24 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCategoryTitle(String id, String title) {
+  Future<void> updateCategoryTitle(String id, String title) async {
+    Category cat = findCategoryById(id);
+    await databaseReference
+        .collection('categories/$userId/cats')
+        .document('${cat.id}')
+        .updateData({'title': title});
+
+      cat.title = title;
+
     findCategoryById(id).title = title;
+      print(cat.title);
+      print(findCategoryById(id).title);
+      notifyListeners();
+      
+
+  }
+
+  Stream<dynamic> get editCatTitleStream {
+    return databaseReference.collection('categories/$userId/cats').snapshots();
   }
 }
-
-

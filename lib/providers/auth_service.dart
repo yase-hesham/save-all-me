@@ -10,8 +10,14 @@ class AuthService with ChangeNotifier  {
     return _auth.currentUser();
   }
 
-
-
+  String getUserId()  {
+  String userId;
+  FirebaseAuth.instance.currentUser().then((value){
+    userId=value.uid;
+  });
+  return userId;
+  }
+  
   Future logout() async {
     var result = FirebaseAuth.instance.signOut();
     notifyListeners();

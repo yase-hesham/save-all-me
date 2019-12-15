@@ -5,16 +5,18 @@ import '../models/category.dart';
 import '../providers/categories.dart';
 
 class EditCategoryItem extends StatefulWidget {
-  final Category cat;
+  final String catId;
   final Key key;
+  
 
-  EditCategoryItem(this.cat, this.key);
+  EditCategoryItem(this.catId, this.key);
 
   @override
   _EditCategoryItemState createState() => _EditCategoryItemState();
 }
 
 class _EditCategoryItemState extends State<EditCategoryItem> {
+    Category cat  ;
   bool _isEditing;
   bool _isInit = false;
   Widget leading = Text(
@@ -34,12 +36,13 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
   var _titleController = TextEditingController(text: '');
   @override
   void initState() {
+    cat = Provider.of<Categories>(context,listen: false).findCategoryById(widget.catId);
     _isEditing = false;
     leading = Text(
-      widget.cat.title,
+      Provider.of<Categories>(context,listen: false).findCategoryById(widget.catId).title,
       style: TextStyle(fontSize: 20),
     );
-    _titleController = TextEditingController(text: widget.cat.title);
+    _titleController = TextEditingController(text: cat.title);
     super.initState();
   }
 
@@ -65,13 +68,13 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
         this.end = Icon(Icons.close, color: Colors.red);
         this.leading = TextField(
           controller: _titleController,
-          decoration: InputDecoration(hintText: widget.cat.title),
+          decoration: InputDecoration(hintText: cat.title),
         );
       } else {
         this.middle = Icon(Icons.edit, color: Colors.green);
         this.end = Icon(Icons.delete, color: Colors.red);
         this.leading = Text(
-          widget.cat.title,
+          cat.title,
           style: TextStyle(fontSize: 20),
         );
       }
@@ -102,10 +105,13 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                       _isEditing = true;
                       switchEditMode();
                     } else {
-                      Provider.of<Categories>(context).updateCategoryTitle(
-                          widget.cat.id, _titleController.text);
-                      _isEditing = false;
+                        Provider.of<Categories>(context,listen: false).updateCategoryTitle(
+                          cat.id, _titleController.text).then((_){
+                            cat.title=_titleController.text;
+                            _isEditing = false;
                       switchEditMode();
+                          });
+                      
                     }
                   });
                 },
@@ -117,8 +123,8 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                 icon: end,
                 onPressed: () {
                   if (this.end.icon == Icons.delete) {
-                    Provider.of<Categories>(context, listen: false)
-                        .deleteCategory(widget.cat.id);
+                    Provider.of<Categories>(context, listen: true)
+                        .deleteCategory(cat.id);
                   } else {
                     _isEditing = false;
                     switchEditMode();

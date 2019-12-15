@@ -6,10 +6,10 @@ import '../providers/categories.dart';
 
 class EditCategoriesScreen extends StatelessWidget {
   static const routeName = '/edit_categories_screen';
+
   @override
   Widget build(BuildContext context) {
-    // final categoriesData =
-    //     Provider.of<Categories>(context,).getCategories;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Categories'),
@@ -18,8 +18,9 @@ class EditCategoriesScreen extends StatelessWidget {
         builder: (ctx, cat, _) {
           return ListView.builder(
             itemCount: cat.getCategories.length,
-            itemBuilder: (ctx, index) =>
-                EditCategoryItem(cat.getCategories[index],ValueKey(cat.getCategories[index].id)),
+            itemBuilder: (ctx, index) => EditCategoryItem(
+                cat.getCategories[index].id,
+                ValueKey(cat.getCategories[index].id)),
           );
         },
       ),

@@ -6,11 +6,12 @@ import '../providers/categories.dart';
 
 class CategoriesItemsWidget extends StatelessWidget {
   final snapshot;
-  CategoriesItemsWidget(this.snapshot);
-
+  final userId;
+  CategoriesItemsWidget(this.snapshot,this.userId);
+  
   @override
   Widget build(BuildContext context) {
-    Provider.of<Categories>(context,listen: false).getData(snapshot);
+    Provider.of<Categories>(context,listen: false).getData(snapshot,userId);
     final catData = Provider.of<Categories>(context).getCategories;
     return ListView.builder(
       itemBuilder: (ctx,index)=>CategoryWidget(categoryId: catData[index].id,),

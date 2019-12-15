@@ -5,9 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../widgets/categories_items_list.dart';
 import '../widgets/app_drawer.dart';
-import '../models/category.dart';
 import '../providers/categories.dart';
-import '../widgets/category_widget.dart';
 
 class CategoriesOverviewScreen extends StatefulWidget {
   final FirebaseUser currentUser;
@@ -36,7 +34,7 @@ title: Text('Welcome'),
         stream: Firestore.instance.collection('/categories/${widget.currentUser.uid}/cats/').snapshots(),
         builder: (ctx,snapshot){
           if(!snapshot.hasData) return Center(child:Text('No Data'));
-          else return CategoriesItemsWidget(snapshot);
+          else return CategoriesItemsWidget(snapshot,widget.currentUser.uid);
         },
       ),
       drawer: AppDrawer(),

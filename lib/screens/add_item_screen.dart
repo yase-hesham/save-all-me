@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:save_all_me/providers/auth_service.dart';
+import 'package:uuid/uuid.dart';
 
 import '../providers/categories.dart';
 import '../models/category_item.dart';
@@ -16,9 +19,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
   var catId='';
   final _form = GlobalKey<FormState>();
   var _editedItem =
-      CategoryItem(id: null, title: '', description: '', imageUrl: '');
+      CategoryItem(id:'', title: '', description: '', imageUrl: '');
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
+  var userId;
+
+
 
 
   void _updateImageUrl() {
@@ -40,7 +46,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       return;
     }
     _form.currentState.save();
-    Provider.of<Categories>(context).addItemToCategory(catId,_editedItem);
+    Provider.of<Categories>(context).addItemToCategory(catId,_editedItem,userId);
     print('added');
 
     Navigator.pop(context);
@@ -49,6 +55,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+
     super.initState();
   }
 

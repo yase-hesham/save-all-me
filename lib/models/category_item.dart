@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 class CategoryItem {
   final String id;
@@ -18,4 +19,14 @@ class CategoryItem {
     title=data['title']??'',
     imageUrl=data['imageUrl']??'',
     description=data['description']??'';
+
+  var uuid = Uuid();
+
+  Map<String,dynamic> toJson()=>
+    {
+      'id':uuid.v4(),
+      'title':title,
+      'imageUrl':imageUrl,
+      'description':description,
+    };
 }
