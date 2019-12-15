@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../models/category_item.dart';
 
 class Categories with ChangeNotifier {
+  final databaseReference = Firestore.instance;
+
+  final String userId;
+
   List<Category> categories = [
-    Category(id: 'id1', title: 'Books', items: [
+    /*Category(id: 'id1', title: 'Books', items: [
       CategoryItem(
         id: 'book1',
         title: 'Book1',
@@ -74,14 +79,32 @@ class Categories with ChangeNotifier {
         imageUrl:
             'https://www.netclipart.com/pp/m/22-226056_book-clipart-png-clip-art-stack-of-books.png',
       )
-    ])
+    ])*/
   ];
+
+  Categories({this.userId, this.categories});
 
   List<Category> get getCategories {
     return [...categories];
   }
 
-  List<CategoryItem>  categoryItems(String id){
+  Future<void> fetchAndSetCategories() async {}
+
+  void getData(AsyncSnapshot<QuerySnapshot> snapshot) {
+    categories= snapshot.data.documents.map((doc) {
+      return Category(
+        id: doc.documentID,
+        items: [
+          ...(doc.data['items']).map((items) {
+            return CategoryItem.fromMap(items);
+          })
+        ],
+        title: doc.data['title'],
+      );
+    }).toList();
+  }
+
+  List<CategoryItem> categoryItems(String id) {
     return findCategoryById(id).items;
   }
 
@@ -95,9 +118,12 @@ class Categories with ChangeNotifier {
         .firstWhere((item) => item.id == id);
   }
 
-  void addCategory(String title) {
-    categories.add(Category(
-        id: DateTime.now().toIso8601String(), title: title, items: []));
+  void addCategory(String title, String userId) async {
+    // categories.add(Category(
+    //     id: DateTime.now().toIso8601String(), title: title, items: []));
+
+    // .add({);
+
     notifyListeners();
   }
 
@@ -106,18 +132,54 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
-  List<CategoryItem> findItemsByCatIdAndTitle(String catId,String title){
+  List<CategoryItem> findItemsByCatIdAndTitle(String catId, String title) {
     Category cat = findCategoryById(catId);
 
-    return cat.items.where((item)=>item.title.toLowerCase().contains(title.toLowerCase())).toList();
+    return cat.items
+        .where((item) => item.title.toLowerCase().contains(title.toLowerCase()))
+        .toList();
   }
 
-  void deleteCategory(String id){
-    categories.removeWhere((cat)=>cat.id==id);
+  void deleteCategory(String id) {
+    categories.removeWhere((cat) => cat.id == id);
     notifyListeners();
   }
 
-  void updateCategoryTitle(String id,String title){
-    findCategoryById(id).title=title;
+  void updateCategoryTitle(String id, String title) {
+    findCategoryById(id).title = title;
+  }
+}
+
+class Api {
+  final Firestore _db = Firestore.instance;
+  final String path;
+  CollectionReference ref;
+
+  Api(this.path) {
+    ref = _db.collection(path);
+  }
+
+  Future<QuerySnapshot> getDataCollection() {
+    return ref.getDocuments();
+  }
+
+  Stream<QuerySnapshot> streamDataCollection() {
+    return ref.snapshots();
+  }
+
+  Future<DocumentSnapshot> getDocumentById(String id) {
+    return ref.document(id).get();
+  }
+
+  Future<void> removeDocument(String id) {
+    return ref.document(id).delete();
+  }
+
+  Future<DocumentReference> addDocument(Map data) {
+    return ref.add(data);
+  }
+
+  Future<void> updateDocument(Map data, String id) {
+    return ref.document(id).updateData(data);
   }
 }

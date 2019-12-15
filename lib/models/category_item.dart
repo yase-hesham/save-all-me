@@ -12,4 +12,10 @@ class CategoryItem {
     this.imageUrl,
     @required this.description,
   });
+
+  CategoryItem.fromMap(Map<dynamic,dynamic> data):
+    id=data['id']??'',
+    title=data['title']??'',
+    imageUrl=data['imageUrl']??'',
+    description=data['description']??'';
 }
