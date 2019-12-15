@@ -35,11 +35,10 @@ class CategoryWidget extends StatelessWidget {
                     child: Text(
                       cat.title,
                       style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w300,
-                        fontFamily: 'MyHappyEnding'
-                      ),
+                          fontSize: 25,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w300,
+                          fontFamily: 'MyHappyEnding'),
                     ),
                   ),
                 ),
@@ -68,7 +67,28 @@ class CategoryWidget extends StatelessWidget {
                       bottomRight: Radius.circular(20),
                     ),
                     color: Colors.purple),
-                child: Text('No items'))
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                      color: Colors.white,
+                      border: Border.all(
+                          color: Theme.of(context).primaryColor, width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black38,
+                            offset: Offset(5, 5),
+                            blurRadius: 5,
+                            spreadRadius: 5)
+                      ],
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 2),
+                    height: deviceScreen.height * .25,
+                    child: Center(child: Text('No items'))))
             : Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
