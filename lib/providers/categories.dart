@@ -99,7 +99,7 @@ class Categories with ChangeNotifier {
           ...(doc.data['items']).map((items) {
             return CategoryItem.fromMap(items);
           })
-        ],
+        ], 
         title: doc.data['title'],
       );
     }).toList();
@@ -157,7 +157,11 @@ class Categories with ChangeNotifier {
         .toList();
   }
 
-  void deleteCategory(String id) {
+  Future<void> deleteCategory(String id,)async {
+    Category cat = findCategoryById(id);
+    await databaseReference
+        .collection('categories/$userId/cats')
+        .document('${cat.id}').delete();
     categories.removeWhere((cat) => cat.id == id);
     notifyListeners();
   }

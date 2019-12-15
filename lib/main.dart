@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:save_all_me/screens/splash_screen.dart';
 import './providers/auth_service.dart';
 
+import './screens/splash_screen.dart';
+import './screens/items_preview_screen.dart';
 import './screens/authenticate_screen.dart';
 import './screens/edit_categories_screen.dart';
 import './providers/categories.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
             AddItemScreen.routeName: (context) => AddItemScreen(),
             CategoryScreen.routeName: (context) => CategoryScreen(),
             EditCategoriesScreen.routeName: (context) => EditCategoriesScreen(),
+            ItemPreviewScreen.routeName:(context)=>ItemPreviewScreen(),
           },
         ),
       ),

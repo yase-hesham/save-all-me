@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:save_all_me/screens/items_preview_screen.dart';
 
 import '../models/category_item.dart';
 import '../providers/categories.dart';
@@ -19,7 +20,7 @@ class CategoryItemWidget extends StatelessWidget {
     final deviceScreen = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        print(itemId);
+        Navigator.pushNamed(context, ItemPreviewScreen.routeName,arguments: {'itemId':itemId,'categoryId':categoryId});
       },
       child: Container(
         width: deviceScreen.width * .4,
