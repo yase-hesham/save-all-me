@@ -16,6 +16,7 @@ class AddItemScreen extends StatefulWidget {
 
 class _AddItemScreenState extends State<AddItemScreen> {
   bool _isInit=true;
+  bool _isLoading=false;
   var catId='';
   final _form = GlobalKey<FormState>();
   var _editedItem =
@@ -46,10 +47,26 @@ class _AddItemScreenState extends State<AddItemScreen> {
       return;
     }
     _form.currentState.save();
-    Provider.of<Categories>(context).addItemToCategory(catId,_editedItem,userId);
-    print('added');
-
+    Provider.of<Categories>(context).addItemToCategory(catId,_editedItem,userId).then((_){
+    setState(() {
+      _isLoading=false;
+    });
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content:Text('Added! yaaay'),
+      duration: Duration(seconds: 1),
+    ));
     Navigator.pop(context);
+
+    }).catchError((err){
+      setState(() {
+      _isLoading=false;
+    });
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content:Text(err.toString()),
+      duration: Duration(seconds: 1),
+    ));
+    });
+
   }
 
   @override
@@ -174,7 +191,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   ),
                 ],
               ),
-              RaisedButton(
+              _isLoading?CircularProgressIndicator(): RaisedButton(
                 child: Text(
                   'Add Item',
                   style: TextStyle(color: Colors.white),

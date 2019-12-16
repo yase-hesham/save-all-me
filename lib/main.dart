@@ -29,11 +29,12 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: Consumer<AuthService>(
-
         builder: (context, auth, __) => MaterialApp(
           title: 'Save All Me',
-          theme: ThemeData(primarySwatch: Colors.purple),
-          home:  FutureBuilder<FirebaseUser>(
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+          ),
+          home: FutureBuilder<FirebaseUser>(
             future: auth.getUser(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
                     ? CategoriesOverviewScreen(snapshot.data)
                     : AuthScreen();
               } else {
-                return  SplashScreen();
+                return SplashScreen();
               }
             },
           ),
@@ -53,7 +54,7 @@ class MyApp extends StatelessWidget {
             AddItemScreen.routeName: (context) => AddItemScreen(),
             CategoryScreen.routeName: (context) => CategoryScreen(),
             EditCategoriesScreen.routeName: (context) => EditCategoriesScreen(),
-            ItemPreviewScreen.routeName:(context)=>ItemPreviewScreen(),
+            ItemPreviewScreen.routeName: (context) => ItemPreviewScreen(),
           },
         ),
       ),

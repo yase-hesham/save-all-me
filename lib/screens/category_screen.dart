@@ -13,17 +13,18 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  Widget appBarTitle = new Text(
+  Widget appBarTitle =  Text(
     '',
-    style: new TextStyle(color: Colors.white),
+    style:  TextStyle(color: Colors.white),
   );
-  Icon actionIcon = new Icon(
+  Icon actionIcon =  Icon(
     Icons.search,
     color: Colors.white,
   );
-  final TextEditingController _searchQuery = new TextEditingController();
+  final TextEditingController _searchQuery =  TextEditingController();
   bool _isSearching;
   String _searchText = "";
+  
 
   _CategoryScreenState() {
     _searchQuery.addListener(() {
@@ -55,10 +56,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final String catTitle = Provider.of<Categories>(context, listen: false)
         .findCategoryById(catId)
         .title;
-    appBarTitle = new Text(
-      catTitle,
-      style: new TextStyle(color: Colors.white),
-    );
+    // appBarTitle =  Text(
+    //   catTitle,
+    //   style:  TextStyle(color: Colors.white),
+    // );
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -75,7 +76,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if (_searchText.isEmpty) {
       return _buildItems(catId, catItems);
     } else {
-      List<CategoryItem> _searchList = Provider.of<Categories>(context)
+      List<CategoryItem> _searchList = Provider.of<Categories>(context,listen: false)
           .findItemsByCatIdAndTitle(catId, _searchText);
       print(_searchList.length);
       return _buildItems(catId, _searchList);
@@ -98,28 +99,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Widget buildBar(BuildContext context) {
-    return new SliverAppBar(
+    return  SliverAppBar(
         centerTitle: true,
         title: appBarTitle,
         actions: <Widget>[
-          new IconButton(
+           IconButton(
             icon: actionIcon,
             onPressed: () {
               setState(() {
                 if (this.actionIcon.icon == Icons.search) {
-                  this.actionIcon = new Icon(
+                  this.actionIcon =  Icon(
                     Icons.close,
                     color: Colors.white,
                   );
-                  this.appBarTitle = new TextField(
+                  this.appBarTitle =  TextField(
                     controller: _searchQuery,
-                    style: new TextStyle(
+                    style:  TextStyle(
                       color: Colors.white,
                     ),
-                    decoration: new InputDecoration(
-                        prefixIcon: new Icon(Icons.search, color: Colors.white),
+                    decoration:  InputDecoration(
+                        prefixIcon:  Icon(Icons.search, color: Colors.white),
                         hintText: "Search...",
-                        hintStyle: new TextStyle(color: Colors.white)),
+                        hintStyle:  TextStyle(color: Colors.white)),
                   );
                   _handleSearchStart();
                 } else {
@@ -139,13 +140,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   void _handleSearchEnd() {
     setState(() {
-      this.actionIcon = new Icon(
+      this.actionIcon =  Icon(
         Icons.search,
         color: Colors.white,
       );
-      this.appBarTitle = new Text(
+      this.appBarTitle =  Text(
         "Search Sample",
-        style: new TextStyle(color: Colors.white),
+        style:  TextStyle(color: Colors.white),
       );
       _isSearching = false;
       _searchQuery.clear();

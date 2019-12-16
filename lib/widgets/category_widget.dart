@@ -18,113 +18,107 @@ class CategoryWidget extends StatelessWidget {
     Category cat = Provider.of<Categories>(context, listen: false)
         .findCategoryById(categoryId);
 
-    return Column(
-      children: <Widget>[
-        CustomPaint(
-          painter: ShapesPainter(),
-          child: Container(
-            height: 30,
-            margin: EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: FittedBox(
-                    child: Text(
-                      cat.title,
-                      style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontFamily: 'MyHappyEnding'),
+    return Container(
+      margin: EdgeInsets.only(top: 8),
+      child: Column(
+        children: <Widget>[
+          CustomPaint(
+            painter: ShapesPainter(),
+            child: Container(
+              height: 30,
+              margin: EdgeInsets.symmetric(horizontal: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: FittedBox(
+                      child: Text(
+                        cat.title,
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w300,
+                            fontFamily: 'MyHappyEnding'),
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                    icon: Icon(
-                      Icons.add_circle,
-                      color: Theme.of(context).primaryColor,
-                      size: 22,
-                    ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, AddItemScreen.routeName,
-                          arguments: cat.id);
-                    }),
-              ],
+                  FlatButton.icon(
+                    label: Text('Add Item',style: TextStyle(color: Theme.of(context).primaryColor),),
+                      icon: Icon(
+                        Icons.add_circle,
+                        color: Theme.of(context).primaryColor,
+                        size: 22, 
+                      ),
+                      onPressed: () {
+                        Navigator.pushNamed(context, AddItemScreen.routeName,
+                            arguments: cat.id);
+                      }),
+                ],
+              ),
             ),
           ),
-        ),
-        cat.items.isEmpty
-            ? Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                margin: EdgeInsets.symmetric(horizontal: 2),
-                decoration: BoxDecoration(
+          cat.items.isEmpty
+              ?  Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                        color: Colors.white,
+                        border: Border.all(
+                            color: Theme.of(context).primaryColor, width: 1),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black38,
+                              offset: Offset(5, 5),
+                              blurRadius: 5,
+                              spreadRadius: 5)
+                        ],
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      margin: EdgeInsets.symmetric(horizontal: 2),
+                      height: deviceScreen.height * .25,
+                      child: Center(child: Text('No items')))
+              : Container(
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(20),
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
                     ),
-                    color: Colors.purple),
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                      ),
-                      color: Colors.white,
-                      border: Border.all(
-                          color: Theme.of(context).primaryColor, width: 1),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black38,
-                            offset: Offset(5, 5),
-                            blurRadius: 5,
-                            spreadRadius: 5)
-                      ],
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    margin: EdgeInsets.symmetric(horizontal: 2),
-                    height: deviceScreen.height * .25,
-                    child: Center(child: Text('No items'))))
-            : Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                    color: Colors.white,
+                    border: Border.all(
+                        color: Theme.of(context).primaryColor, width: 1),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black38,
+                          offset: Offset(5, 5),
+                          blurRadius: 5,
+                          spreadRadius: 5)
+                    ],
                   ),
-                  color: Colors.white,
-                  border: Border.all(
-                      color: Theme.of(context).primaryColor, width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black38,
-                        offset: Offset(5, 5),
-                        blurRadius: 5,
-                        spreadRadius: 5)
-                  ],
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 2),
+                  height: deviceScreen.height * .25,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: cat.items.length,
+                    itemBuilder: (ctx, index) {
+                      return CategoryItemWidget(
+                        itemId: cat.items[index].id,
+                        categoryId: categoryId,
+                      );
+                    },
+                  ),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                margin: EdgeInsets.symmetric(horizontal: 2),
-                height: deviceScreen.height * .25,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: cat.items.length,
-                  itemBuilder: (ctx, index) {
-                    return CategoryItemWidget(
-                      itemId: cat.items[index].id,
-                      categoryId: categoryId,
-                    );
-                  },
-                ),
-              ),
-        SizedBox(
-          height: 8,
-        )
-      ],
+          SizedBox(
+            height: 8,
+          )
+        ],
+      ),
     );
   }
 }

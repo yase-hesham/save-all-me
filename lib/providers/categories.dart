@@ -113,17 +113,15 @@ class Categories with ChangeNotifier {
     return categories.firstWhere((cat) => cat.id == id);
   }
 
-  CategoryItem findCategoryItemById(String id, String categoryId) {
+  CategoryItem findCategoryItemById(String itemId, String categoryId) {
     return findCategoryById(categoryId)
         .items
-        .firstWhere((item) => item.id == id);
+        .firstWhere((item) => item.id == itemId);
   }
 
-  Future<void> addCategory(String title, String userId) async {
-    // categories.add(Category(
-    //     id: DateTime.now().toIso8601String(), title: title, items: []));
 
-    // .add({);
+
+  Future<void> addCategory(String title, String userId) async {
     await databaseReference
         .collection('/categories/$userId/cats')
         .add({'title': title, 'items': []});
@@ -131,11 +129,11 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
-  void addItemToCategory(String catId, CategoryItem item, String userId) {
+  Future<void> addItemToCategory(String catId, CategoryItem item, String userId) async{
     Category cat = findCategoryById(catId);
     cat.items.add(item);
     print(cat.items.length);
-    databaseReference
+    await databaseReference
         .collection('categories/$userId/cats')
         .document('$catId')
         .updateData({
@@ -183,7 +181,4 @@ class Categories with ChangeNotifier {
 
   }
 
-  Stream<dynamic> get editCatTitleStream {
-    return databaseReference.collection('categories/$userId/cats').snapshots();
-  }
 }

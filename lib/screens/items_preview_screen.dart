@@ -18,7 +18,7 @@ class ItemPreviewScreen extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('title'),
+        title: Text(item.title),
       ),
       body: Container(
         width: screenSize.width,
@@ -29,9 +29,12 @@ class ItemPreviewScreen extends StatelessWidget {
             children: <Widget>[
               ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    item.imageUrl,
-                    fit: BoxFit.fill,
+                  child: Hero(
+                    tag: itemId,
+                                      child: Image.network(
+                      item.imageUrl,
+                      fit: BoxFit.fill,
+                    ),
                   )),
               SizedBox(
                 height: 8,

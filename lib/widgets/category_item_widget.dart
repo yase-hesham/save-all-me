@@ -32,9 +32,12 @@ class CategoryItemWidget extends StatelessWidget {
           child: Stack(
             children: <Widget>[
               Positioned.fill(
-                child: Image.network(
-                  itemData.imageUrl,
-                  fit: BoxFit.fill,
+                child: Hero(
+                  tag: itemId,
+                                  child: Image.network(
+                    itemData.imageUrl,
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               Positioned(
@@ -60,7 +63,7 @@ class CategoryItemWidget extends StatelessWidget {
                   alignment: Alignment.center,
                   child: FittedBox(
                       child: Text(itemData.title,
-                          style: TextStyle(color: Colors.black))),
+                          style: TextStyle(color: Colors.white))),
                 ),
               )
             ],
