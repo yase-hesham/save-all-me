@@ -22,15 +22,6 @@ class AuthScreen extends StatelessWidget {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-                // gradient: LinearGradient(
-                //   colors: [
-                //     Color.fromRGBO(215, 117, 255, 1).withOpacity(0.5),
-                //     Color.fromRGBO(255, 188, 117, 1).withOpacity(0.9),
-                //   ],
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   stops: [0, 1],
-                // ),
                 color: Colors.white),
           ),
           SingleChildScrollView(
@@ -49,22 +40,22 @@ class AuthScreen extends StatelessWidget {
                       // transform: Matrix4.rotationZ(-8 * pi / 180)
                       //   ..translate(-10.0),
                       // ..translate(-10.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.purple.shade700,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 8,
-                            color: Colors.black26,
-                            offset: Offset(0, 2),
-                          )
-                        ],
-                      ),
+                      // decoration: BoxDecoration(
+                      //   borderRadius: BorderRadius.circular(40),
+                      //   color: Colors.purple.shade700,
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       blurRadius: 8,
+                      //       color: Colors.black26,
+                      //       offset: Offset(0, 2),
+                      //     )
+                      //   ],
+                      // ),
                       child: Text(
                         'Save all me',
                         style: GoogleFonts.kaushanScript(
                             textStyle: TextStyle(
-                          color: Theme.of(context).accentTextTheme.title.color,
+                          color: Theme.of(context).primaryColor,
                           fontSize: 40,
                           fontFamily: 'Anton',
                           fontStyle: FontStyle.normal,

@@ -1,13 +1,15 @@
+import 'dart:io';
+import 'package:path/path.dart' as path; 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../models/category_item.dart';
 
+
 class Categories with ChangeNotifier {
   final databaseReference = Firestore.instance;
-
   String userId;
-
   List<Category> categories = [
     /*Category(id: 'id1', title: 'Books', items: [
       CategoryItem(
@@ -88,6 +90,14 @@ class Categories with ChangeNotifier {
     return [...categories];
   }
 
+  Future<String> uploadFile(File image) async{
+    StorageReference storageReference = FirebaseStorage.instance.ref().child('pictures/$userId/${path.basename(image.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(image);
+    await uploadTask.onComplete;
+    final fileUrl= await storageReference.getDownloadURL();
+    return fileUrl;
+  }
+
   Future<void> fetchAndSetCategories() async {}
 
   void getData(AsyncSnapshot<QuerySnapshot> snapshot, String userId) {
@@ -129,10 +139,15 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addItemToCategory(String catId, CategoryItem item, String userId) async{
+  Future<void> addItemToCategory(String catId, CategoryItem item,File image) async{
+    final imageUrl = await uploadFile(image);
+    
+    print(imageUrl);
+    item.imageUrl=imageUrl;
     Category cat = findCategoryById(catId);
     cat.items.add(item);
     print(cat.items.length);
+
     await databaseReference
         .collection('categories/$userId/cats')
         .document('$catId')

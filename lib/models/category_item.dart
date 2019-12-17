@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 class CategoryItem {
   final String id;
   final String title;
-  final String imageUrl;
+   String imageUrl;
   final String description;
 
   CategoryItem({
