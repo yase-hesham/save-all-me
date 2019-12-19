@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryItem {
-  final String id;
-  final String title;
+   String id;
+   String title;
    String imageUrl;
-  final String description;
+   String description;
 
   CategoryItem({
     @required this.id,
@@ -14,6 +14,9 @@ class CategoryItem {
     @required this.description,
   });
 
+  set setId(id){
+    this.id=id;
+  }  
   CategoryItem.fromMap(Map<dynamic,dynamic> data):
     id=data['id']??'',
     title=data['title']??'',
@@ -24,7 +27,7 @@ class CategoryItem {
 
   Map<String,dynamic> toJson()=>
     {
-      'id':uuid.v4(),
+      'id':id==null?uuid.v4():id,
       'title':title,
       'imageUrl':imageUrl,
       'description':description,

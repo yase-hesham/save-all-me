@@ -20,7 +20,7 @@ class CategoryItemWidget extends StatelessWidget {
     final deviceScreen = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, ItemPreviewScreen.routeName,arguments: {'itemId':itemId,'categoryId':categoryId});
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemPreviewScreen(categoryId,itemId)));
       },
       child: Container(
         width: deviceScreen.width * .4,
@@ -34,7 +34,7 @@ class CategoryItemWidget extends StatelessWidget {
               Positioned.fill(
                 child: Hero(
                   tag: itemId,
-                                  child: Image.network(
+                  child: Image.network(
                     itemData.imageUrl,
                     fit: BoxFit.fill,
                   ),

@@ -53,7 +53,7 @@ class CategoryWidget extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.pushNamed(context, AddItemScreen.routeName,
-                            arguments: cat.id);
+                            arguments: { 'catId':cat.id});
                       }),
                 ],
               ),

@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:path/path.dart' as path; 
+import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../models/category.dart';
 import '../models/category_item.dart';
-
 
 class Categories with ChangeNotifier {
   final databaseReference = Firestore.instance;
@@ -90,15 +89,15 @@ class Categories with ChangeNotifier {
     return [...categories];
   }
 
-  Future<String> uploadFile(File image) async{
-    StorageReference storageReference = FirebaseStorage.instance.ref().child('pictures/$userId/${path.basename(image.path)}');
+  Future<String> uploadFile(File image) async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('pictures/$userId/${path.basename(image.path)}');
     StorageUploadTask uploadTask = storageReference.putFile(image);
     await uploadTask.onComplete;
-    final fileUrl= await storageReference.getDownloadURL();
+    final fileUrl = await storageReference.getDownloadURL();
     return fileUrl;
   }
-
-  Future<void> fetchAndSetCategories() async {}
 
   void getData(AsyncSnapshot<QuerySnapshot> snapshot, String userId) {
     this.userId = userId;
@@ -109,7 +108,7 @@ class Categories with ChangeNotifier {
           ...(doc.data['items']).map((items) {
             return CategoryItem.fromMap(items);
           })
-        ], 
+        ],
         title: doc.data['title'],
       );
     }).toList();
@@ -129,8 +128,6 @@ class Categories with ChangeNotifier {
         .firstWhere((item) => item.id == itemId);
   }
 
-
-
   Future<void> addCategory(String title, String userId) async {
     await databaseReference
         .collection('/categories/$userId/cats')
@@ -139,25 +136,38 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addItemToCategory(String catId, CategoryItem item,File image) async{
-    final imageUrl = await uploadFile(image);
-    
-    print(imageUrl);
-    item.imageUrl=imageUrl;
-    Category cat = findCategoryById(catId);
-    cat.items.add(item);
-    print(cat.items.length);
+  Future<void> addItemToCategory(
+      String catId, CategoryItem item, File image, String imageUrl) async {
+    if (imageUrl.isEmpty) imageUrl = await uploadFile(image);
 
+    item.imageUrl = imageUrl;
+    Category cat = findCategoryById(catId);
+    int index = -1;
+    index = cat.items.indexWhere((selectedItem) => selectedItem.id == item.id);
+    if (index >= 0) {
+      // item.setId = cat.items.elementAt(index).id;
+      // cat.items.removeAt(index);
+      
+      cat.items.elementAt(index).title = item.title;
+      cat.items.elementAt(index).description = item.description;
+      cat.items.elementAt(index).imageUrl = item.imageUrl;
+    } else {
+      cat.items.add(item);
+    }
     await databaseReference
         .collection('categories/$userId/cats')
         .document('$catId')
         .updateData({
-      'items': [
-        ...cat.items.map((item) {
-          return item.toJson();
+          'items': [
+            ...cat.items.map((item) {
+              return item.toJson();
+            })
+          ]
         })
-      ]
-    });
+        .then((_) {})
+        .catchError((err) {
+          cat.items.remove(item);
+        });
 
     notifyListeners();
   }
@@ -170,11 +180,14 @@ class Categories with ChangeNotifier {
         .toList();
   }
 
-  Future<void> deleteCategory(String id,)async {
+  Future<void> deleteCategory(
+    String id,
+  ) async {
     Category cat = findCategoryById(id);
     await databaseReference
         .collection('categories/$userId/cats')
-        .document('${cat.id}').delete();
+        .document('${cat.id}')
+        .delete();
     categories.removeWhere((cat) => cat.id == id);
     notifyListeners();
   }
@@ -186,14 +199,9 @@ class Categories with ChangeNotifier {
         .document('${cat.id}')
         .updateData({'title': title});
 
-      cat.title = title;
+    cat.title = title;
 
     findCategoryById(id).title = title;
-      print(cat.title);
-      print(findCategoryById(id).title);
-      notifyListeners();
-      
-
+    notifyListeners();
   }
-
 }

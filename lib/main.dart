@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
             AddItemScreen.routeName: (context) => AddItemScreen(),
             CategoryScreen.routeName: (context) => CategoryScreen(),
             EditCategoriesScreen.routeName: (context) => EditCategoriesScreen(),
-            ItemPreviewScreen.routeName: (context) => ItemPreviewScreen(),
+            //ItemPreviewScreen.routeName: (context) => ItemPreviewScreen(),
           },
         ),
       ),

@@ -1,11 +1,8 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:save_all_me/providers/auth_service.dart';
-import 'package:uuid/uuid.dart';
 
 import '../providers/categories.dart';
 import '../models/category_item.dart';
@@ -21,33 +18,37 @@ class _AddItemScreenState extends State<AddItemScreen> {
   bool _isInit = true;
   bool _isLoading = false;
   var catId = '';
+  var itemId = null;
   final _form = GlobalKey<FormState>();
   var _editedItem =
       CategoryItem(id: '', title: '', description: '', imageUrl: '');
+  var _initialValues = {
+    'description': '',
+    'title': '',
+    'imageUrl': '',
+  };
   var userId;
   File _imageFile;
-
-  
+  bool _isEditing = false;
 
   void _saveForm() {
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
     }
-    print(userId);
     _form.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
     Provider.of<Categories>(context)
-        .addItemToCategory(catId, _editedItem,_imageFile)
+        .addItemToCategory(catId, _editedItem, _imageFile, _editedItem.imageUrl)
         .then((_) {
-          Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text('Added! yaaay'),
-        duration: Duration(seconds: 1),
-      ));
-      setState(() {
-        _isLoading = false;
-      });
-      
-      Navigator.pop(context);
+      // Scaffold.of(context).showSnackBar(SnackBar(
+      //   content: Text('Added! yaaay'),
+      //   duration: Duration(seconds: 1),
+      // ));
+
+      Navigator.pop(context,{'itemId':itemId,'catId':catId},);
     }).catchError((err) {
       setState(() {
         _isLoading = false;
@@ -61,19 +62,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
       source: ImageSource.camera,
       maxWidth: 600,
     );
-    if(imageFile!=null){
+    if (imageFile != null) {
       setState(() {
-      _imageFile=imageFile;
+        _imageFile = imageFile;
       });
-      
     }
   }
 
-
-
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -85,7 +82,23 @@ class _AddItemScreenState extends State<AddItemScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      catId = ModalRoute.of(context).settings.arguments as String;
+      Map<String, String> map =
+          ModalRoute.of(context).settings.arguments as Map<String, String>;
+      catId = map['catId'];
+      itemId = map['itemId'];
+      if (itemId != null) {
+        _editedItem = Provider.of<Categories>(context)
+            .findCategoryItemById(itemId, catId);
+        _initialValues = {
+          'id': _editedItem.id,
+          'title': _editedItem.title,
+          'description': _editedItem.description,
+          'imageUrl': _editedItem.imageUrl,
+        };
+        setState(() {
+          _isEditing = true;
+        });
+      }
       _isInit = false;
     }
     super.didChangeDependencies();
@@ -104,6 +117,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _initialValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 keyboardType: TextInputType.text,
                 validator: (value) {
@@ -122,6 +136,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initialValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
@@ -150,55 +165,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         border: Border.all(width: 1, color: Colors.purple),
                         borderRadius: BorderRadius.circular(20)),
                     child: Center(
-                      child: _imageFile==null
+                      child: _imageFile == null && !_isEditing
                           ? Text('Pic an image')
-                          : Image.file(
-                              _imageFile,
-                              fit: BoxFit.cover,
-                            ),
+                          : _isEditing
+                              ? Image.network(_editedItem.imageUrl,
+                                  fit: BoxFit.cover)
+                              : Image.file(
+                                  _imageFile,
+                                  fit: BoxFit.cover,
+                                ),
                     ),
                   ),
-                 
                   Expanded(
-                     child:FlatButton.icon(
-                    icon: Icon(Icons.camera),
-                    label: Text('Take Image'),
-                    onPressed: _takePicFromCam,
-                  ),
-                    // child: TextFormField(
-                    //   focusNode: _imageUrlFocusNode,
-                    //   controller: _imageUrlController,
-                    //   decoration: InputDecoration(labelText: 'Image URl'),
-                    //   keyboardType: TextInputType.text,
-                    //   validator: (value) {
-                    //     if (value.isEmpty) {
-                    //       return 'Please enter an image URL.';
-                    //     }
-                    //     if (!value.startsWith('http') &&
-                    //         !value.startsWith('https')) {
-                    //       return 'Please enter a valid URL.';
-                    //     }
-                    //     if (!value.endsWith('.png') &&
-                    //         !value.endsWith('.jpg') &&
-                    //         !value.endsWith('.jpeg')) {
-                    //       return 'Please enter a valid image URL.';
-                    //     }
-                    //     return null;
-                    //   },
-                    //   onSaved: (value) {
-                    //     _editedItem = CategoryItem(
-                    //       title: _editedItem.title,
-                    //       id: _editedItem.id,
-                    //       description: _editedItem.description,
-                    //       imageUrl: value,
-                    //     );
-                    //   },
-                    // ),
+                    child: FlatButton.icon(
+                      icon: Icon(Icons.camera),
+                      label: Text('Take Image'),
+                      onPressed: _takePicFromCam,
+                    ),
                   ),
                 ],
               ),
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? Center(child: CircularProgressIndicator())
                   : RaisedButton(
                       child: Text(
                         'Add Item',
