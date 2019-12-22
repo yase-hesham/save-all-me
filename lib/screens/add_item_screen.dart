@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../providers/categories.dart';
 import '../models/category_item.dart';
@@ -33,18 +34,29 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _saveForm() {
     final isValid = _form.currentState.validate();
-    if(_imageFile==null){
-      showDialog(context: context,builder: (ctx){
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text('No Image!'),
-          actions: <Widget>[
-            FlatButton(child: Text('Ok'),onPressed: ()=>Navigator.pop(context),)
-          ],
-        );
-      });
+    if (_imageFile == null&&_editedItem.imageUrl.isEmpty) {
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text('No Image!'),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () => Navigator.pop(
+                    context,
+                    RouteSettings(
+                      arguments: {'catId': catId, 'itemId': itemId},
+                    ),
+                  ),
+                )
+              ],
+            );
+          });
+      return;
     }
-    if (!isValid&&_imageFile==null) {
+    if (!isValid && _imageFile == null) {
       return;
     }
     _form.currentState.save();
@@ -59,7 +71,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
       //   duration: Duration(seconds: 1),
       // ));
 
-      Navigator.pop(context,{'itemId':itemId,'catId':catId},);
+      Navigator.pop(
+        context,
+        {'itemId': itemId, 'catId': catId},
+      );
     }).catchError((err) {
       setState(() {
         _isLoading = false;

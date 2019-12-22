@@ -18,16 +18,16 @@ class AppDrawer extends StatelessWidget {
             child: Text('Save all me'),
             decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           ),
-          ListTile(
-            leading: Icon(Icons.edit),
-            title: Text('Edit Categories'),
+           ListTile(
+            leading: const Icon(Icons.edit),
+            title:const  Text('Edit Categories'),
             onTap: () {
               Navigator.pushNamed(context, EditCategoriesScreen.routeName);
             },
           ),
           ExpansionTile(
-            title: Text('Categories'),
-            leading: Icon(Icons.category),
+            title: const Text('Categories'),
+            leading:const  Icon(Icons.category),
             children:
                 categories.map((item) => DrawerCategoryItem(item)).toList(),
           ),

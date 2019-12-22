@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class TopBar extends StatelessWidget implements PreferredSizeWidget {
+class TopBarBack extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget> actions;
 
-  TopBar({@required this.title,@required this.actions});
+  TopBarBack({@required this.title, @required this.actions});
 
   ShapeBorder kBackButtonShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.only(
@@ -29,6 +29,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
       child: Column(
         children: <Widget>[
           Card(
+            
             elevation: 4,
             shape: roundedShape,
             child: Row(
@@ -36,8 +37,11 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.dehaze,color: Theme.of(context).primaryColor,),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
                 SizedBox(
                   width: 20,
@@ -48,13 +52,11 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.deepPurple,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'MyHappyEnding'
-                    ),
+                        fontSize: 30,
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'MyHappyEnding'),
                   ),
-
                 ),
                 Spacer(),
                 ...actions
@@ -68,5 +70,5 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   // TODO: implement preferredSize
-  Size get preferredSize =>  Size.fromHeight(70);
+  Size get preferredSize => Size.fromHeight(70);
 }

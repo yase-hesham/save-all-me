@@ -4,6 +4,7 @@ import 'package:save_all_me/models/category_item.dart';
 import 'package:save_all_me/screens/add_item_screen.dart';
 
 import '../providers/categories.dart';
+import '../widgets/custom_top_bar_back.dart';
 
 class ItemPreviewScreen extends StatelessWidget {
   String catId;
@@ -13,7 +14,7 @@ class ItemPreviewScreen extends StatelessWidget {
   static const routeName = '/item_preview_screen';
 
   void _showItemAndGetData(BuildContext context) async {
-    final result2 = await Navigator.push(
+     await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => AddItemScreen(),
@@ -21,12 +22,8 @@ class ItemPreviewScreen extends StatelessWidget {
               RouteSettings(arguments: {'itemId': itemId, 'catId': catId})),
     );
 
-    catId = result2['catId'];
-    itemId = result2['itemId'];
-    print('start');
-    print(catId);
-    print(itemId);
-    print('got it ');
+    /*catId = result2['catId'];
+    itemId = result2['itemId'];*/
   }
 
   @override
@@ -39,25 +36,42 @@ class ItemPreviewScreen extends StatelessWidget {
 
     final item = Provider.of<Categories>(context, listen: false)
         .findCategoryItemById(itemId, catId);
-    
+
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 4,
-        title: Text('Info'),
-        actions: <Widget>[
-          IconButton(
+      // appBar: AppBar(
+      //   elevation: 4,
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.only(
+      //       bottomLeft: Radius.circular(20),
+      //       bottomRight: Radius.circular(20),
+      //     ),
+      //   ),
+      //   title: Text('Info'),
+      //   actions: <Widget>[
+      //     IconButton(
+      //       icon: Icon(
+      //         Icons.edit,
+      //         color: Colors.white,
+      //       ),
+      //       onPressed: () {
+      //         //Navigator.pushNamed(context, AddItemScreen.routeName,arguments: {'itemId': itemId, 'catId': catId});
+      //         _showItemAndGetData(context);
+      //       },
+      //     )
+      //   ],
+      // ),
+      appBar: TopBarBack(title:'Info',actions: <Widget>[
+        IconButton(
             icon: Icon(
               Icons.edit,
-              color: Colors.white,
+              color: Colors.purple,
             ),
             onPressed: () {
               //Navigator.pushNamed(context, AddItemScreen.routeName,arguments: {'itemId': itemId, 'catId': catId});
               _showItemAndGetData(context);
-            },
-          )
-        ],
-      ),
+            },)
+      ],),
       body: Container(
         // color: Colors.grey.shade300,
         child: SingleChildScrollView(

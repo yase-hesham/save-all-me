@@ -37,6 +37,7 @@ class CategoryItemWidget extends StatelessWidget {
                   child: Image.network(
                     itemData.imageUrl,
                     fit: BoxFit.fill,
+
                   ),
                 ),
               ),

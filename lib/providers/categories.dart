@@ -3,6 +3,7 @@ import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../models/category.dart';
 import '../models/category_item.dart';
 
@@ -89,16 +90,6 @@ class Categories with ChangeNotifier {
     return [...categories];
   }
 
-  Future<String> uploadFile(File image) async {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('pictures/$userId/${path.basename(image.path)}');
-    StorageUploadTask uploadTask = storageReference.putFile(image);
-    await uploadTask.onComplete;
-    final fileUrl = await storageReference.getDownloadURL();
-    return fileUrl;
-  }
-
   void getData(AsyncSnapshot<QuerySnapshot> snapshot, String userId) {
     this.userId = userId;
     categories = snapshot.data.documents.map((doc) {
@@ -136,22 +127,45 @@ class Categories with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> uploadFile(File image) async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('pictures/$userId/${path.basename(image.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(image);
+    await uploadTask.onComplete;
+    final fileUrl = await storageReference.getDownloadURL();
+    return fileUrl;
+  }
+
+  Future<void> deleteFile(String imageUrl) async {
+    StorageReference storageReference =
+        await FirebaseStorage.instance.getReferenceFromUrl(imageUrl);
+    await storageReference.delete();
+  }
+
   Future<void> addItemToCategory(
       String catId, CategoryItem item, File image, String imageUrl) async {
-    if (imageUrl.isEmpty) imageUrl = await uploadFile(image);
+    if (imageUrl.isEmpty && image != null) {
+      // if imageUrl is  empty and there is a file
+      imageUrl = await uploadFile(image);
+    } else if (imageUrl.isNotEmpty && image != null) {
+      //if imageUrl is not empty and there is a file 
+      //delete old file then upload new file 
+      deleteFile(imageUrl);
+      imageUrl = await uploadFile(image);
+    }
 
     item.imageUrl = imageUrl;
     Category cat = findCategoryById(catId);
     int index = -1;
     index = cat.items.indexWhere((selectedItem) => selectedItem.id == item.id);
     if (index >= 0) {
-      // item.setId = cat.items.elementAt(index).id;
-      // cat.items.removeAt(index);
-      
       cat.items.elementAt(index).title = item.title;
       cat.items.elementAt(index).description = item.description;
       cat.items.elementAt(index).imageUrl = item.imageUrl;
     } else {
+      Uuid a= Uuid();
+      item.id=a.v1();
       cat.items.add(item);
     }
     await databaseReference

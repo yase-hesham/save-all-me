@@ -7,7 +7,6 @@ import '../providers/categories.dart';
 class EditCategoryItem extends StatefulWidget {
   final String catId;
   final Key key;
-  
 
   EditCategoryItem(this.catId, this.key);
 
@@ -16,9 +15,10 @@ class EditCategoryItem extends StatefulWidget {
 }
 
 class _EditCategoryItemState extends State<EditCategoryItem> {
-    Category cat  ;
+  Category cat;
   bool _isEditing;
   bool _isInit = false;
+  bool _isLoading = false;
   Widget leading = Text(
     '',
     style: TextStyle(fontSize: 20),
@@ -33,13 +33,16 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
     size: 20,
     color: Colors.red,
   );
-  var _titleController = TextEditingController(text: '');
+  var _titleController = TextEditingController();
   @override
   void initState() {
-    cat = Provider.of<Categories>(context,listen: false).findCategoryById(widget.catId);
+    cat = Provider.of<Categories>(context, listen: false)
+        .findCategoryById(widget.catId);
     _isEditing = false;
     leading = Text(
-      Provider.of<Categories>(context,listen: false).findCategoryById(widget.catId).title,
+      Provider.of<Categories>(context, listen: false)
+          .findCategoryById(widget.catId)
+          .title,
       style: TextStyle(fontSize: 20),
     );
     _titleController = TextEditingController(text: cat.title);
@@ -64,7 +67,9 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
   void switchEditMode() {
     setState(() {
       if (this._isEditing) {
-        this.middle = Icon(Icons.check, color: Colors.green);
+        this.middle = _isLoading
+            ? CircularProgressIndicator()
+            : Icon(Icons.check, color: Colors.green);
         this.end = Icon(Icons.close, color: Colors.red);
         this.leading = TextField(
           controller: _titleController,
@@ -100,28 +105,32 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
               IconButton(
                 icon: middle,
                 onPressed: () {
-                  setState(() {
-                    if (this.middle.icon == Icons.edit) {
-                      _isEditing = true;
+                  if (this.middle.icon == Icons.edit) {
+                    _isEditing = true;
+                    switchEditMode();
+                  } else {
+                    Provider.of<Categories>(context, listen: false)
+                        .updateCategoryTitle(cat.id, _titleController.text)
+                        .then((_) {
+                      cat.title = _titleController.text;
+                      _isEditing = false;
+                      Scaffold.of(context).removeCurrentSnackBar();
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text('Edited !'),
+                        duration: Duration(seconds: 2),
+                      ));
                       switchEditMode();
-                    } else {
-                        Provider.of<Categories>(context,listen: false).updateCategoryTitle(
-                          cat.id, _titleController.text).then((_){
-                            cat.title=_titleController.text;
-                            _isEditing = false;
-                      switchEditMode();
-                          }).catchError((err){
-                            showDialog(context: context,builder: (ctx){
-                              return AlertDialog(
-                                content: Text(err.toString()),
-                              );
-                            });
-                            _isEditing = false;
-
-                        });
-                      
-                    }
-                  });
+                    }).catchError((err) {
+                      showDialog(
+                          context: context,
+                          builder: (ctx) {
+                            return AlertDialog(
+                              content: Text(err.toString()),
+                            );
+                          });
+                      _isEditing = false;
+                    });
+                  }
                 },
               ),
               SizedBox(
@@ -131,10 +140,40 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                 icon: end,
                 onPressed: () {
                   if (this.end.icon == Icons.delete) {
-                    Provider.of<Categories>(context, listen: false)
-                        .deleteCategory(cat.id).then((_){
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('Deleted!'),),);
+                    setState(() {
+                      _isLoading = true;
                     });
+                    showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          // Show Confirm Dialog
+                          return AlertDialog(
+                            content: Text('Are u sure ?! '),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('Yes'),
+                                onPressed: () {
+                                  Provider.of<Categories>(context,
+                                          listen: false)
+                                      .deleteCategory(cat.id)
+                                      .then((_) {
+                                    Scaffold.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Deleted!'),
+                                      ),
+                                    );
+                                  });
+                                },
+                              ),
+                              FlatButton(
+                                child: Text('No'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ],
+                          );
+                        });
                   } else {
                     _isEditing = false;
                     switchEditMode();

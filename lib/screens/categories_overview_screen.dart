@@ -37,7 +37,6 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
       drawer: AppDrawer(),
     appBar: TopBar(
       title: 'Welcome',
-      onTitleTapped: (){},
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
