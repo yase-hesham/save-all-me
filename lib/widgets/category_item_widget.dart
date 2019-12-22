@@ -47,10 +47,12 @@ class CategoryItemWidget extends StatelessWidget {
                 child: Container(
                   height: 40,
                   decoration: BoxDecoration(
+                    border: Border.all(color: Colors.purple),
+                    color: Colors.white,
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(20),
                         topLeft: Radius.circular(20)),
-                    color: Colors.purple.shade400,
+                    //color: Colors.purple.shade400,
                     boxShadow: [
                       BoxShadow(
                         blurRadius: 4,
@@ -63,7 +65,7 @@ class CategoryItemWidget extends StatelessWidget {
                   alignment: Alignment.center,
                   child: FittedBox(
                       child: Text(itemData.title,
-                          style: TextStyle(color: Colors.white))),
+                          style: TextStyle(color: Colors.purple))),
                 ),
               )
             ],

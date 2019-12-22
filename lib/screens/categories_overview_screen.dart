@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:save_all_me/screens/splash_screen.dart';
+import 'package:save_all_me/widgets/custom_top_bar.dart';
 
 import '../widgets/categories_items_list.dart';
 import '../widgets/app_drawer.dart';
@@ -21,16 +22,29 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 8,
-        title: Text('Welcome'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _showAddCategoryDialog(context),
-          )
-        ],
-      ),
+//      appBar: AppBar(
+//        backgroundColor: Colors.transparent,
+//        centerTitle: true,
+//        elevation: 8,
+//        title: Text('Welcome'),
+//        actions: <Widget>[
+//          IconButton(
+//            icon: Icon(Icons.add),
+//            onPressed: () => _showAddCategoryDialog(context),
+//          )
+//        ],
+//      ),
+      drawer: AppDrawer(),
+    appBar: TopBar(
+      title: 'Welcome',
+      onTitleTapped: (){},
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
+          onPressed: () => _showAddCategoryDialog(context),
+        ),
+      ],
+    ),
       body: StreamBuilder(
         stream: Firestore.instance
             .collection('/categories/${widget.currentUser.uid}/cats/')
@@ -51,7 +65,7 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
             return CategoriesItemsWidget(snapshot, widget.currentUser.uid);
         },
       ),
-      drawer: AppDrawer(),
+
     );
   }
 

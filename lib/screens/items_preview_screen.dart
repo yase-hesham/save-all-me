@@ -43,6 +43,7 @@ class ItemPreviewScreen extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        elevation: 4,
         title: Text('Info'),
         actions: <Widget>[
           IconButton(

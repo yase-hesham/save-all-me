@@ -25,12 +25,12 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
   );
   Icon middle = Icon(
     Icons.edit,
-    size: 30,
+    size: 20,
     color: Colors.green,
   );
   Icon end = Icon(
     Icons.delete,
-    size: 30,
+    size: 20,
     color: Colors.red,
   );
   var _titleController = TextEditingController(text: '');
@@ -110,7 +110,15 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                             cat.title=_titleController.text;
                             _isEditing = false;
                       switchEditMode();
-                          });
+                          }).catchError((err){
+                            showDialog(context: context,builder: (ctx){
+                              return AlertDialog(
+                                content: Text(err.toString()),
+                              );
+                            });
+                            _isEditing = false;
+
+                        });
                       
                     }
                   });
@@ -123,8 +131,10 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                 icon: end,
                 onPressed: () {
                   if (this.end.icon == Icons.delete) {
-                    Provider.of<Categories>(context, listen: true)
-                        .deleteCategory(cat.id);
+                    Provider.of<Categories>(context, listen: false)
+                        .deleteCategory(cat.id).then((_){
+                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('Deleted!'),),);
+                    });
                   } else {
                     _isEditing = false;
                     switchEditMode();

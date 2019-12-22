@@ -33,7 +33,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void _saveForm() {
     final isValid = _form.currentState.validate();
-    if (!isValid) {
+    if(_imageFile==null){
+      showDialog(context: context,builder: (ctx){
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('No Image!'),
+          actions: <Widget>[
+            FlatButton(child: Text('Ok'),onPressed: ()=>Navigator.pop(context),)
+          ],
+        );
+      });
+    }
+    if (!isValid&&_imageFile==null) {
       return;
     }
     _form.currentState.save();
@@ -60,6 +71,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Future<void> _takePicFromCam() async {
     final imageFile = await ImagePicker.pickImage(
       source: ImageSource.camera,
+      maxWidth: 600,
+    );
+    if (imageFile != null) {
+      setState(() {
+        _imageFile = imageFile;
+      });
+    }
+  }
+
+  Future<void> _takePicFromGallarry() async {
+    final imageFile = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
       maxWidth: 600,
     );
     if (imageFile != null) {
@@ -156,11 +179,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 },
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(right: 20, top: 20, bottom: 20),
-                    width: 100,
                     height: 100,
+                    width: 100,
                     decoration: BoxDecoration(
                         border: Border.all(width: 1, color: Colors.purple),
                         borderRadius: BorderRadius.circular(20)),
@@ -176,12 +201,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                 ),
                     ),
                   ),
-                  Expanded(
-                    child: FlatButton.icon(
-                      icon: Icon(Icons.camera),
-                      label: Text('Take Image'),
-                      onPressed: _takePicFromCam,
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      FlatButton.icon(
+                        icon: Icon(Icons.camera),
+                        label: Text('Take Image'),
+                        onPressed: _takePicFromCam,
+                      ),
+                      FlatButton.icon(
+                        icon: Icon(Icons.image),
+                        label: Text('Choose Image'),
+                        onPressed: _takePicFromGallarry,
+                      ),
+                    ],
                   ),
                 ],
               ),
