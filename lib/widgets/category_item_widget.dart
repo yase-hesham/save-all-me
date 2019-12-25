@@ -24,7 +24,7 @@ class CategoryItemWidget extends StatelessWidget {
       },
       child: Container(
         width: deviceScreen.width * .4,
-        height: deviceScreen.width * .5,
+        height: deviceScreen.width * .2,
         child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 8,
@@ -46,7 +46,7 @@ class CategoryItemWidget extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Container(
-                  height: 40,
+                  height: 30,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.purple),
                     color: Colors.white,

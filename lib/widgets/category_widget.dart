@@ -47,9 +47,9 @@ class CategoryWidget extends StatelessWidget {
                   FlatButton.icon(
                     label: Text('Add Item',style: TextStyle(color: Theme.of(context).primaryColor),),
                       icon: Icon(
-                        Icons.add_circle,
+                        Icons.add,
                         color: Theme.of(context).primaryColor,
-                        size: 22, 
+                        size: 20, 
                       ),
                       onPressed: () {
                         Navigator.pushNamed(context, AddItemScreen.routeName,
@@ -81,7 +81,7 @@ class CategoryWidget extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       margin: EdgeInsets.symmetric(horizontal: 2),
                       height: deviceScreen.height * .25,
-                      child: Center(child: Text('No items')))
+                      child: Center(child: Text('No items',style: TextStyle(fontFamily: 'MyHappyEnding',fontSize: 30),)))
               : Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(

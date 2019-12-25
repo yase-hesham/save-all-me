@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:save_all_me/screens/splash_screen.dart';
-import 'package:save_all_me/widgets/custom_top_bar.dart';
+import '../screens/splash_screen.dart';
+import '../widgets/custom_top_bar.dart';
 
 import '../widgets/categories_items_list.dart';
 import '../widgets/app_drawer.dart';
@@ -35,15 +35,18 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
 //        ],
 //      ),
       drawer: AppDrawer(),
-    appBar: TopBar(
-      title: 'Welcome',
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add,color: Theme.of(context).primaryColor,),
-          onPressed: () => _showAddCategoryDialog(context),
-        ),
-      ],
-    ),
+      appBar: TopBar(
+        title: 'Welcome',
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.add,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () => _showAddCategoryDialog(context),
+          ),
+        ],
+      ),
       body: StreamBuilder(
         stream: Firestore.instance
             .collection('/categories/${widget.currentUser.uid}/cats/')
@@ -64,14 +67,13 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
             return CategoriesItemsWidget(snapshot, widget.currentUser.uid);
         },
       ),
-
     );
   }
 
   void _showAddCategoryDialog(BuildContext context) {
     bool _isLoading = false;
     GlobalKey<FormState> key = GlobalKey();
-     final _titleController = TextEditingController();
+    final _titleController = TextEditingController();
     bool _hasInputError = false;
     AlertDialog addCategoryDialog = AlertDialog(
       shape: RoundedRectangleBorder(
@@ -82,12 +84,11 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
         margin: EdgeInsets.all(8),
         child: Form(
           key: key,
-                  child: TextFormField(
-            
-            validator: (value){
-              if(value.isEmpty){
+          child: TextFormField(
+            validator: (value) {
+              if (value.isEmpty) {
                 return "Invalid Title";
-              }else if(value.length>10){
+              } else if (value.length > 10) {
                 return "Can't be more than 10 characters";
               }
               return null;
@@ -101,32 +102,35 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
         ),
       ),
       actions: <Widget>[
-        _isLoading? CircularProgressIndicator():FlatButton(
-          child: Text('Add Catalog'),
-          onPressed: () {
-            if (key.currentState.validate()) {
-              setState(() {
-                _isLoading=true;
-              });
-              Provider.of<Categories>(context, listen: false)
-                  .addCategory(_titleController.text, widget.currentUser.uid)
-                  .then((_) {
+        _isLoading
+            ? CircularProgressIndicator()
+            : FlatButton(
+                child: Text('Add Catalog'),
+                onPressed: () {
+                  if (key.currentState.validate()) {
                     setState(() {
-                      _isLoading=false;
+                      _isLoading = true;
                     });
-                Navigator.of(context).pop();
-              }).catchError((err){
-                setState(() {
-                  _isLoading=false;
-                });
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(err.toString()),
-                ));
-                Navigator.of(context).pop();
-              });
-            }
-          },
-        )
+                    Provider.of<Categories>(context, listen: false)
+                        .addCategory(
+                            _titleController.text, widget.currentUser.uid)
+                        .then((_) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Navigator.of(context).pop();
+                    }).catchError((err) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text(err.toString()),
+                      ));
+                      Navigator.of(context).pop();
+                    });
+                  }
+                },
+              )
       ],
     );
     showDialog(context: context, builder: (ctx) => addCategoryDialog);

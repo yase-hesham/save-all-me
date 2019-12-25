@@ -12,11 +12,16 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = Provider.of<Categories>(context).getCategories;
     return Drawer(
-      child: ListView(
+      elevation: 8,
+      child: Column(
         children: <Widget>[
-          DrawerHeader(
-            child: Text('Save all me'),
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+          Container(
+            width: double.infinity,
+            child: DrawerHeader(
+              child: Text('Save all me'),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+              
+            ),
           ),
            ListTile(
             leading: const Icon(Icons.edit),
@@ -31,16 +36,19 @@ class AppDrawer extends StatelessWidget {
             children:
                 categories.map((item) => DrawerCategoryItem(item)).toList(),
           ),
-          Align(alignment: Alignment.bottomLeft,
-          child: ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Log out'),
-            onTap: () {
-              Navigator.pop(context);
-              Provider.of<AuthService>(context,listen: false).logout();
+          Spacer(),
+          Container(
+            margin: EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Log out'),
+              onTap: () {
+                Navigator.pop(context);
+                Provider.of<AuthService>(context,listen: false).logout();
 
-            },
-          ),)
+              },
+            ),
+          )
         ],
       ),
     );

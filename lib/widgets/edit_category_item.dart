@@ -109,27 +109,44 @@ class _EditCategoryItemState extends State<EditCategoryItem> {
                     _isEditing = true;
                     switchEditMode();
                   } else {
-                    Provider.of<Categories>(context, listen: false)
-                        .updateCategoryTitle(cat.id, _titleController.text)
-                        .then((_) {
-                      cat.title = _titleController.text;
-                      _isEditing = false;
-                      Scaffold.of(context).removeCurrentSnackBar();
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text('Edited !'),
-                        duration: Duration(seconds: 2),
-                      ));
-                      switchEditMode();
-                    }).catchError((err) {
+                    if (_titleController.text.isEmpty) {
                       showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return AlertDialog(
-                              content: Text(err.toString()),
-                            );
-                          });
-                      _isEditing = false;
-                    });
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('Error'),
+                          content: Text('Title can\'t be empty!'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Ok'),
+                              onPressed: () => Navigator.pop(context),
+                            )
+                          ],
+                        ),
+                      );
+                      return;
+                    } else {
+                      Provider.of<Categories>(context, listen: false)
+                          .updateCategoryTitle(cat.id, _titleController.text)
+                          .then((_) {
+                        cat.title = _titleController.text;
+                        _isEditing = false;
+                        Scaffold.of(context).removeCurrentSnackBar();
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text('Edited !'),
+                          duration: Duration(seconds: 2),
+                        ));
+                        switchEditMode();
+                      }).catchError((err) {
+                        showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              return AlertDialog(
+                                content: Text(err.toString()),
+                              );
+                            });
+                        _isEditing = false;
+                      });
+                    }
                   }
                 },
               ),

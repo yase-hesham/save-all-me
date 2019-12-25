@@ -198,6 +198,7 @@ class Categories with ChangeNotifier {
     String id,
   ) async {
     Category cat = findCategoryById(id);
+    cat.items.map((item)=>deleteFile(item.imageUrl));
     await databaseReference
         .collection('categories/$userId/cats')
         .document('${cat.id}')
